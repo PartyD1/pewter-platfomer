@@ -1,0 +1,30 @@
+--- /home/user/partyd1/pewter-the-platformer/src/phaser/UIScene.ts	2026-09-30 01:38:03.258895357 +0000
++++ /tmp/claude-0/-home-user-pewter-platfomer/a4742603-f271-536f-ac31-6454ea7e2f31/scratchpad/builds/c2-grounded/src/phaser/UIScene.ts	2026-09-30 01:45:00.855171850 +0000
+@@ -8,6 +8,7 @@
+ import { SpriteGenerator } from "../enemySystem/sprite/SpriteGenerator.ts";
+ import "./chatbox.css";
+ import { WorldFacts } from "./ExternalClasses/worldFacts.ts";
++import { buildGridContext } from "../languageModel/gridContext.ts";
+ import { PLAYER_PHYSICS, TILE } from "./playerPhysics"; // Adjust path to your playerPhysics file
+ 
+ // Set the CSS variable for the tileset background-image once at module load so
+@@ -592,13 +593,12 @@
+           }
+         }
+ 
+-        const hiddenContext = [
+-          this.latestSelectionContext,
+-          moveContext,
+-          worldFactsContext,
+-        ]
+-          .filter(Boolean)
+-          .join("\n");
++        // EXPERIMENT C2: context built now from live state (no cached selection text, no lossy facts).
++        void worldFactsContext; void moveContext;
++        const hiddenContext = buildGridContext(
++          activeBox,
++          this.scene.get("editorScene") as EditorScene,
++        );
+         const sendPromise = sendUserPromptWithContext(
+           userMsg,
+           hiddenContext || undefined,

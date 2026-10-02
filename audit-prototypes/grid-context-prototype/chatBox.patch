@@ -1,0 +1,28 @@
+--- /home/user/partyd1/pewter-the-platformer/src/languageModel/chatBox.ts	2026-09-30 01:38:03.255751477 +0000
++++ /tmp/claude-0/-home-user-pewter-platfomer/a4742603-f271-536f-ac31-6454ea7e2f31/scratchpad/builds/c2-grounded/src/languageModel/chatBox.ts	2026-09-30 01:45:00.855841446 +0000
+@@ -2,6 +2,7 @@
+ import { AIMessage, BaseMessage, HumanMessage } from "@langchain/core/messages";
+ import { SystemMessage } from "@langchain/core/messages";
+ import { buildSystemPrompt } from "./systemPrompt.ts";
++import { summarizeActions } from "./gridContext.ts";
+ 
+ // Persistent history of all chat messages exchanged
+ // Expose current chat history for UI rendering
+@@ -44,6 +45,7 @@
+       if (typeof displayContent === "object") {
+         displayContent = JSON.stringify(displayContent);
+       }
++      displayContent = String(displayContent).split("\n[ACTIONS THIS TURN")[0];
+       const type = msg._getType();
+       const cssClass = type === "human" ? "pt-msg-human" : "pt-msg-ai";
+       const body =
+@@ -278,7 +280,8 @@
+     const replyText = Array.isArray(reply.text)
+       ? reply.text.join("\n")
+       : String(reply.text);
+-    const aiMessage = new AIMessage(replyText);
++    const actionLog = summarizeActions(reply.toolCalls);
++    const aiMessage = new AIMessage(actionLog ? `${replyText}\n${actionLog}` : replyText);
+     historyRef.push(aiMessage);
+     maybeSaveSnapshot(reply.toolCalls);
+ 
