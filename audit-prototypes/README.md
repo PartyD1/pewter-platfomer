@@ -1,7 +1,7 @@
 # Audit prototypes
 
 Research tooling built during the September–October 2026 Pewter audit. Nothing here is
-wired into the app; it is a starting point for the Pewter Autocomplete work (playtest
+wired into the app; it is a starting point for the Pewter Ghost work (playtest
 agent, chunk generator, browser test harness) and the record behind the audit's numbers.
 
 Paths inside these scripts still point at the machine they were written on
@@ -24,5 +24,5 @@ Related documents:
 
 - Audit: https://claude.ai/artifact/6n12nNv2S6rNdoBFvMYjwu
 - Roadmap: https://claude.ai/artifact/SxqUKcwzJX5xN71XqE1A5D
-- Pewter Autocomplete plan: https://claude.ai/artifact/WPaaXeNv1g72QBexLBHeVh
-- Building Pewter Autocomplete: https://claude.ai/artifact/SsD7GPscrCvo1UQ941kDkL
+- Pewter Ghost plan: https://claude.ai/artifact/WPaaXeNv1g72QBexLBHeVh
+- Building Pewter Ghost: https://claude.ai/artifact/SsD7GPscrCvo1UQ941kDkL
