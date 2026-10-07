@@ -341,3 +341,76 @@ export type LogEvent =
   | { type: "play.end"; t: number; reachedGoal: boolean; deaths: number }
   | { type: "undo" | "redo"; t: number; what: "own" | "ghost" | "mixed" }
   | { type: "save"; t: number; snapshotId: string };
+
+// ---------------------------------------------------------------------------
+// Prompt rendering (owned by fill/prompt.ts; used by the proxy and eval)
+// ---------------------------------------------------------------------------
+
+/**
+ * `apps/editor/src/fill/prompt.ts` must export:
+ *   PROMPT_VERSION: string
+ *   renderFillPrompt(req: FillRequest): RenderedPrompt
+ *   parseModelAnswer(raw: unknown): ModelAnswer | null   // strict validation, null on garbage
+ */
+export interface RenderedPrompt {
+  system: string;
+  user: string;
+  /** JSON schema for the model's structured output (Gemini responseSchema subset). */
+  responseSchema: Record<string, unknown>;
+  promptVersion: string;
+}
+
+// ---------------------------------------------------------------------------
+// Proxy HTTP API (proxy/src)
+// ---------------------------------------------------------------------------
+
+/** POST /fill  (Authorization: Bearer <session token>) */
+export interface ProxyFillBody {
+  sessionId: string;
+  request: FillRequest;
+  /** 2 = two samples for twoSample confidence or variety. Default 1. */
+  samples?: 1 | 2;
+  temperature?: number;
+}
+
+export interface ProxyFillResponse {
+  /** First (or only) parsed answer; null when the model declined or output was unusable. */
+  answer: ModelAnswer | null;
+  /** All parsed answers when samples = 2. */
+  answers?: (ModelAnswer | null)[];
+  /** Mean token log-probability of the answer when the upstream exposes it. */
+  logprob?: number;
+  latencyMs: number;
+  model: string;
+  promptVersion: string;
+  requestHash: string;
+  error?: string;
+}
+
+/** POST /log */
+export interface ProxyLogBody {
+  sessionId: string;
+  events: LogEvent[];
+}
+
+/** GET /session?token=...  -> per-token condition and config overrides */
+export interface ProxySessionResponse {
+  sessionId: string;
+  condition: "llm" | "algo" | "none" | "stub";
+  overrides: Record<string, unknown>;
+}
+
+/** One line of proxy/.data/recordings/<sessionId>.jsonl — what the offline suite replays. */
+export interface Recording {
+  t: string; // ISO time
+  sessionId: string;
+  requestHash: string;
+  request: FillRequest;
+  answer: ModelAnswer | null;
+  answers?: (ModelAnswer | null)[];
+  logprob?: number;
+  latencyMs: number;
+  model: string;
+  promptVersion: string;
+  error?: string;
+}
