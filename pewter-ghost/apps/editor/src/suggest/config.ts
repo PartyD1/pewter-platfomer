@@ -46,6 +46,28 @@ export interface GhostConfig {
   confidenceSource: "stated" | "logprob" | "twoSample";
   /** Proxy base URL. */
   proxyUrl: string;
+
+  // --- Suggestion manager (G-17 / G-24 / per-person thresholds) -------------
+  /** Tiles around a dismissed ghost's bounding box that still count as "the same structure". */
+  cooldownMarginTiles: number;
+  /** While the dismiss streak is maxed, a placement farther than this (tiles) from every dismissed ghost starts a new structure. */
+  newStructureTiles: number;
+  /** A shown ghost with no response ends with outcome "timeout" after this many ms (0 = never). */
+  ghostTimeoutMs: number;
+  /** After Ctrl+Space with nothing held, a suggestion arriving within this many ms shows as "requested". */
+  requestWindowMs: number;
+  /** Painting outside a shown ghost dismisses it ("keep drawing and it goes away"). */
+  dismissOnDrawElsewhere: boolean;
+  /** Per-session adaptation of showNowAbove (suggest/thresholds.ts). */
+  adaptThresholds: boolean;
+  /** How much one adaptation moves showNowAbove. */
+  adaptStep: number;
+  /** Lower bound for adapted showNowAbove. */
+  adaptMin: number;
+  /** Upper bound for adapted showNowAbove. */
+  adaptMax: number;
+  /** Outcomes of one type in a row that trigger an adaptation step. */
+  adaptRun: number;
 }
 
 export const DEFAULT_CONFIG: GhostConfig = {
@@ -71,6 +93,16 @@ export const DEFAULT_CONFIG: GhostConfig = {
   kinds: { finish: true, extend: true, fix: true },
   confidenceSource: "stated",
   proxyUrl: "http://localhost:8787",
+  cooldownMarginTiles: 1,
+  newStructureTiles: 6,
+  ghostTimeoutMs: 30000,
+  requestWindowMs: 3000,
+  dismissOnDrawElsewhere: true,
+  adaptThresholds: true,
+  adaptStep: 0.05,
+  adaptMin: 0.5,
+  adaptMax: 0.95,
+  adaptRun: 2,
 };
 
 export const config: GhostConfig = structuredClone(DEFAULT_CONFIG);

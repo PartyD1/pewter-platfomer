@@ -413,4 +413,10 @@ export interface Recording {
   model: string;
   promptVersion: string;
   error?: string;
+  /** Sampling temperature sent upstream (added by proxy, G-09). */
+  temperature?: number;
+  /** Sample count requested (added by proxy, G-09). */
+  samples?: 1 | 2;
+  /** Raw model text per sample, kept only when a sample failed to parse (added by proxy, G-09). */
+  raw?: (string | null)[];
 }
